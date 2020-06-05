@@ -8,6 +8,7 @@
   "dependencies": {
     "@sap/cds": "^3",
     "@sap/cds-dk": "^1.8.4",
+    "cors": "^2.8.5",
     "express": "^4.17.1"
   },
   "scripts": {
@@ -21,7 +22,7 @@
       "db": {
         "kind": "sqlite",
         "credentials": {
-          "database": "db/checkinapi.db"
+          "database": "db/checkinappapi.db"
         }
       }
     }

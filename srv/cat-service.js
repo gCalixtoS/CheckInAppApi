@@ -1,22 +1,20 @@
-  module.exports = (srv) => {
+module.exports = (srv) => {
 
-  const {CheckIn} = cds.entities('my.checkinapi')
+  const { CheckIn, Users, Offices, Floors } = cds.entities('my.checkinapi')
 
-//   // Reduce stock of ordered books
-//   srv.before ('CREATE', 'Orders', async (req) => {
-//     const order = req.data
-//     if (!order.amount || order.amount <= 0)  return req.error (400, 'Order at least 1 book')
-//     const tx = cds.transaction(req)
-//     const affectedRows = await tx.run (
-//       UPDATE (CheckIn)
-//         .set   ({ stock: {'-=': order.amount}})
-//         .where ({ stock: {'>=': order.amount},/*and*/ ID: order.book_ID})
-//     )
-//     if (affectedRows === 0)  req.error (409, "Sold out, sorry")
-//   })
+  srv.before('CREATE', 'CheckIn', async (req) => {
+    const checkIn = req.data
+    
+    const user = await cds.run(SELECT.from(Users).where({ ID: { '=': checkIn.user.ID } }))
+    
+    if (user.length == 0) {
+        let result = await cds.run(INSERT.into(Users).entries(checkIn.user))        
+    }
+    req.data.user_ID = checkIn.user.ID
+    delete req.data.user
 
-//   // Add some discount for overstocked books
-//   srv.after ('READ', 'CheckIn', each => {
-//   })
+    const maxID = await cds.run(SELECT.from(CheckIn))
 
+    req.data.ID = maxID.length == 0 ? 1 : maxID[maxID.length -1].ID + 1
+  })
 }
