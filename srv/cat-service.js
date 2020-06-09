@@ -25,7 +25,8 @@ module.exports = (srv) => {
 		if (existsCheckIn.length > 0) {
 			req.reject(400, 'Já existe um check-in para a localidade e data.')
 		} else {
-			req.data.user_ID = checkIn.user.ID
+
+			req.data.user_ID = checkIn.user_ID
 			delete req.data.user
 
 			const maxID = await cds.run(SELECT.from(CheckIn))
