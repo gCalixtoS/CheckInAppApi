@@ -20,12 +20,16 @@ entity CheckIn {
 entity Offices {
     key ID : Integer;
     name   : String;
+    localization: String;
+    code : String;
+    active : Integer
 }
 
 entity Floors {
     key ID   : Integer;
     name     : String;
     capacity : Integer;
+    active   : Integer;
     office   : Association to Offices;
 }
 
@@ -33,38 +37,64 @@ entity SecurityGuards{
     key ID : Integer;
     name   : String;
     email  : String;
+    active : Integer;
 }
 
 entity FloorSecurityGuards{
     key ID         : Integer;
     floor          : Association to Floors;
     securityGuard  : Association to SecurityGuards;
-}
+};
 
-context View {
-    VIEW CheckInList as SELECT FROM CheckIn
-    {
-        key ID,
-        office.name as officeName,
-        floor.name as floorName,
-        date,
-        active,
-        user.ID as user
-    };
+VIEW Administrators as SELECT From FloorSecurityGuards {
+    key ID : Integer,
+    floor.ID as floorId,
+    securityGuard.ID as securityGuardId,
+    floor.capacity as capacity,
+    floor.name as floorName,
+    securityGuard.email as securityGuardEmail,
+    securityGuard.name as securityGuardName,
+};
 
-    VIEW AvailableCapacity as SELECT FROM CheckIn
-    {
-        key floor.ID,
+VIEW FloorsList as SELECT FROM Floors{
+    key ID,
+    office.name as officeName,
+    name as floorName,
+    capacity,
+    active
+};
 
-        (floor.capacity - count(ID)) as AvailableCapacity : Integer,
-        date
-    } GROUP BY floor.ID, date;
+VIEW FloorSecurityGuardsView as SELECT FROM FloorSecurityGuards{
+    key ID,
+    securityGuard.name as securityGuardName,
+    securityGuard.email as securityGuardEmail,
+    floor.name as floor,
+    floor.ID as floor_ID,
+    floor.office.name as office
+};
 
-    VIEW OccupiedCapacity as SELECT FROM CheckIn
-    {
-        key floor.ID,
-        (office.name || '-' || floor.name) as officeFloor : String,
-        count(ID) as OccupiedCapacity : Integer,
-        date
-    } GROUP BY floor.ID, date
-}
+VIEW CheckInList as SELECT FROM CheckIn
+{
+    key ID,
+    office.name as officeName,
+    floor.name as floorName,
+    date,
+    active,
+    user.ID as user
+};
+
+VIEW AvailableCapacity as SELECT FROM CheckIn
+{
+    key floor.ID,
+
+    (floor.capacity - count(ID)) as AvailableCapacity : Integer,
+    date
+} GROUP BY floor.ID, date;
+
+VIEW OccupiedCapacity as SELECT FROM CheckIn
+{
+    key floor.ID,
+    (office.name || '-' || floor.name) as officeFloor : String,
+    count(ID) as OccupiedCapacity : Integer,
+    date
+} GROUP BY date, floor.ID;
