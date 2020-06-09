@@ -13,7 +13,7 @@ module.exports = (srv) => {
 			const result = await cds.run(INSERT.into(Users).entries(checkIn.user))
 		}
 
-		const existsCheckIn = await cds.run(SELECT.from(CheckIn).where({ office_ID: { '=': checkIn.office_ID }, date: { '=': checkIn.date } }))
+		const existsCheckIn = await cds.run(SELECT.from(CheckIn).where({ office_ID: { '=': checkIn.office_ID }, date: { '=': checkIn.date }, user_ID : {'=' : checkIn.user.ID} }))
 
 		req.data.user_ID = checkIn.user.ID
 			delete req.data.user
