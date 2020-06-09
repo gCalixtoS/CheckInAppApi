@@ -89,7 +89,7 @@ VIEW AvailableCapacity as SELECT FROM CheckIn
 
     (floor.capacity - count(ID)) as AvailableCapacity : Integer,
     date
-} GROUP BY floor.ID, date;
+} GROUP BY floor.ID, date, floor.capacity;
 
 VIEW OccupiedCapacity as SELECT FROM CheckIn
 {
@@ -97,4 +97,4 @@ VIEW OccupiedCapacity as SELECT FROM CheckIn
     (office.name || '-' || floor.name) as officeFloor : String,
     count(ID) as OccupiedCapacity : Integer,
     date
-} GROUP BY date, floor.ID;
+} GROUP BY floor.ID, date, office.name, floor.name;
