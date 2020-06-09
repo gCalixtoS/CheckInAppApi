@@ -7,20 +7,23 @@ module.exports = (srv) => {
 	srv.before('CREATE', 'CheckIn', async (req) => {
 		const checkIn = req.data
 
+		
+
 		const user = await cds.run(SELECT.from(Users).where({ ID: { '=': checkIn.user.ID } }))
 
 		if (user.length == 0) {
 			const result = await cds.run(INSERT.into(Users).entries(checkIn.user))
 		}
 
-		const existsCheckIn = await cds.run(SELECT.from(CheckIn).where({ office_ID: { '=': checkIn.office_ID }, date: { '=': checkIn.date }, user_ID : {'=' : checkIn.user.ID} }))
+		const existsCheckIn = await cds.run(SELECT.from(CheckIn).where({ floor_ID: { '=': checkIn.floor_ID }, date: { '=': checkIn.date }, user_ID : {'=' : checkIn.user.ID} }))
 
 		req.data.user_ID = checkIn.user.ID
-			delete req.data.user
 
-			const maxID = await cds.run(SELECT.from(CheckIn))
+		delete req.data.user
 
-			req.data.ID = maxID.length == 0 ? 1 : maxID[maxID.length - 1].ID + 1
+		const maxID = await cds.run(SELECT.from(CheckIn))
+
+		req.data.ID = maxID.length == 0 ? 1 : maxID[maxID.length - 1].ID + 1
 
 		if (existsCheckIn.length > 0) {
 			req.reject(400, 'Já existe um check-in para a localidade e data.')
