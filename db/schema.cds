@@ -8,8 +8,7 @@ entity Users {
     email  : String;
 }
 
-entity CheckIn {
-    key ID : Integer;
+entity CheckIn : cuid{
     user   : Association to Users;
     office : Association to Offices;
     floor  : Association to Floors;
@@ -17,37 +16,33 @@ entity CheckIn {
     active : Integer;
 }
 
-entity Offices {
-    key ID : Integer;
+entity Offices : cuid{
     name   : String;
     localization: String;
     code : String;
     active : Integer
 }
 
-entity Floors {
-    key ID   : Integer;
+entity Floors : cuid{
     name     : String;
     capacity : Integer;
     active   : Integer;
     office   : Association to Offices;
 }
 
-entity SecurityGuards{
-    key ID : Integer;
+entity SecurityGuards : cuid{
     name   : String;
     email  : String;
     active : Integer;
 }
 
-entity FloorSecurityGuards{
-    key ID         : Integer;
+entity FloorSecurityGuards : cuid{
     floor          : Association to Floors;
     securityGuard  : Association to SecurityGuards;
 };
 
 VIEW Administrators as SELECT From FloorSecurityGuards {
-    key ID : Integer,
+    key ID : String,
     floor.ID as floorId,
     securityGuard.ID as securityGuardId,
     floor.capacity as capacity,
@@ -57,7 +52,7 @@ VIEW Administrators as SELECT From FloorSecurityGuards {
 };
 
 VIEW FloorsList as SELECT FROM Floors{
-    key ID,
+    key ID : String,
     office.name as officeName,
     name as floorName,
     capacity,
@@ -65,7 +60,7 @@ VIEW FloorsList as SELECT FROM Floors{
 };
 
 VIEW FloorSecurityGuardsView as SELECT FROM FloorSecurityGuards{
-    key ID,
+    key ID : String,
     securityGuard.name as securityGuardName,
     securityGuard.email as securityGuardEmail,
     floor.name as floor,
@@ -75,7 +70,7 @@ VIEW FloorSecurityGuardsView as SELECT FROM FloorSecurityGuards{
 
 VIEW CheckInList as SELECT FROM CheckIn
 {
-    key ID,
+    key ID : String,
     office.name as officeName,
     floor.name as floorName,
     date,
@@ -86,7 +81,6 @@ VIEW CheckInList as SELECT FROM CheckIn
 VIEW AvailableCapacity as SELECT FROM CheckIn
 {
     key floor.ID,
-
     (floor.capacity - count(ID)) as AvailableCapacity : Integer,
     date
 } GROUP BY floor.ID, date, floor.capacity;

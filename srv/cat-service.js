@@ -17,30 +17,6 @@ module.exports = (srv) => {
 
 			req.data.user_ID = checkIn.user.ID
             delete req.data.user
-            
-			const maxID = await cds.run(SELECT.from(CheckIn))
-			req.data.ID = maxID.length == 0 ? 1 : maxID[maxID.length - 1].ID + 1
-
 		}
-	})
-
-	srv.before('CREATE', 'Offices', async (req) => {
-		const maxID = await cds.run(SELECT.from(Offices))
-		req.data.ID = maxID.length == 0 ? 1 : maxID[maxID.length - 1].ID + 1
-	})
-
-	srv.before('CREATE', 'Floors', async (req) => {
-		const maxID = await cds.run(SELECT.from(Floors))
-		req.data.ID = maxID.length == 0 ? 1 : maxID[maxID.length - 1].ID + 1
-	})
-
-	srv.before('CREATE', 'FloorSecurityGuards', async (req) => {
-		const maxID = await cds.run(SELECT.from(FloorSecurityGuards))
-		req.data.ID = maxID.length == 0 ? 1 : maxID[maxID.length - 1].ID + 1
-	})
-
-	srv.before('CREATE', 'SecurityGuards', async (req) => {
-		const maxID = await cds.run(SELECT.from(SecurityGuards))
-		req.data.ID = maxID.length == 0 ? 1 : maxID[maxID.length - 1].ID + 1
 	})
 }
