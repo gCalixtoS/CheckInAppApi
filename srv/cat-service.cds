@@ -14,5 +14,6 @@ service CatalogService {
   view ActiveOffices as select from my.Offices where active = 1;
   view ActiveFloors as select from my.Floors where active = 1;
   view FloorsList as select from my.FloorsList;
-  view Administrators as select from my.Administrators
+  view Administrators as select from my.Administrators;
+  view DailyCheckInList as select from my.DailyCheckInList
 }

@@ -1,6 +1,6 @@
 module.exports = (srv) => {
 
-	const { CheckIn, Users, Offices, Floors, FloorSecurityGuards, SecurityGuards } = cds.entities('my.checkinapi')
+	const { CheckIn, Users } = cds.entities('my.checkinapi')
 
 	srv.before('CREATE', 'CheckIn', async (req) => {
 		const checkIn = req.data

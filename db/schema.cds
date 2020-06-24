@@ -92,3 +92,15 @@ VIEW OccupiedCapacity as SELECT FROM CheckIn
     count(ID) as OccupiedCapacity : Integer,
     date
 } GROUP BY floor.ID, date, office.name, floor.name;
+
+VIEW DailyCheckInList as SELECT FROM CheckIn
+{
+    key ID : String,
+    office.name as officeName,
+    floor.name as floorName,
+    floor.ID as floorID,
+    date,
+    active,
+    user.name as userName,
+    user.email as userEmail
+};
