@@ -8,6 +8,11 @@ entity Users {
     email  : String;
 }
 
+entity SysAdmins : cuid {
+    name   : String;
+    email  : String;
+}
+
 entity CheckIn : cuid{
     user   : Association to Users;
     office : Association to Offices;

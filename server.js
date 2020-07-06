@@ -1,6 +1,9 @@
 const cds = require('@sap/cds')
 const nodemailer = require('nodemailer')
 const moment = require('moment')
+const Auth = require('./config/auth')
+const AdminAuth = require('./config/adminAuth')
+
 
 cds.on('bootstrap', (app) => {
 	// add your own middleware before any by cds are added
@@ -11,8 +14,14 @@ cds.on('bootstrap', (app) => {
 		next();
 	});
 
+	app.use('/catalog', Auth)
+	app.use('/admin', AdminAuth.authenticate)
+
+	app.get('/api/login', AdminAuth.login)
+
 	app.get('/api/checkInList', async (req, res) => {
-		const { FloorSecurityGuardsView, Users, DailyCheckInList } = cds.entities('my.checkinapi')
+		
+		const { FloorSecurityGuardsView, DailyCheckInList } = cds.entities('my.checkinapi')
 
 		const dailyCheckIns = await cds.run(SELECT.from(DailyCheckInList).where({ date: { '=': moment().format('YYYY-MM-DD') } }))
 		let dailyCheckInsFloors = {}
@@ -23,7 +32,7 @@ cds.on('bootstrap', (app) => {
 				dailyCheckInsFloors[checkIn.floorID].push(checkIn)
 			}
 		})
-
+		
 		Object.keys(dailyCheckInsFloors).map(async (id) => {
 			const securityGuards = await cds.run(SELECT.from(FloorSecurityGuardsView).where({ floor_ID: { '=': id } }))
 
@@ -39,27 +48,29 @@ cds.on('bootstrap', (app) => {
 				const emails = securityGuards.map((securityGuard) => {
 					return securityGuard.securityGuardEmail
 				})
-
+				
 				const office = securityGuards[0].office
 				const floor = securityGuards[0].floor
-
 
 				transporter.sendMail({
 					from: process.env.MAIL_PROVIDER,
 					to: [emails],
-					subject: `Lista de check-ins para o dia ${ moment().format('DD/MM/YYYY')}`,
-					text: dailyCheckInsFloors[id].map((checkIn) => checkIn.userName + ' : ' + checkIn.userEmail).join('\n')
+					subject: `Lista de check-ins para o dia ${ moment().format('DD/MM/YYYY')}. Localidade: ${office} - ${floor}`,
+					html: `<h4>${moment().format('DD/MM/YYYY')} ${office} - ${floor}` +
+					'<table style="border: 1px solid black;border-collapse: collapse;"> <thead> <tr> <th style="border: 1px solid black;border-collapse: collapse;">Nome</th> <th style="border: 1px solid black;border-collapse: collapse;">E-mail</th></tr></thead><tbody>' +
+					dailyCheckInsFloors[id].map((checkIn) => `<tr><td style="border: 1px solid black;border-collapse: collapse;">${checkIn.userName}</td><td style="border: 1px solid black;border-collapse: collapse;">${checkIn.userEmail}</td></tr>`).join('')
+					+ "</tbody>" 
 				}, function (error, info) {
 					if (error) {
-						console.log(error);
+						console.log(error)
 					} else {
-						console.log('Email sent: ' + info.response);
+						console.log('Email sent: ' + info.response)
 					}
-				});
+				})
 			}
 		})
 
-		res.send('oks')
+		res.status(200).send('success')
 	})
 })
 
