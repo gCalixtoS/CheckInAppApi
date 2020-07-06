@@ -1,11 +1,13 @@
 const cds = require('@sap/cds')
 const nodemailer = require('nodemailer')
 const moment = require('moment')
-const Auth = require('./config/auth')
-const AdminAuth = require('./config/adminAuth')
+const Auth = require('./srv/config/auth')
+const AdminAuth = require('./srv/config/adminAuth')
+const env = require('./variables.js')
 
 
 cds.on('bootstrap', (app) => {
+	
 	// add your own middleware before any by cds are added
 	var cors = require('cors')
 	app.use(cors())
@@ -40,8 +42,8 @@ cds.on('bootstrap', (app) => {
 				const transporter = nodemailer.createTransport({
 					service: 'gmail',
 					auth: {
-						user: process.env.MAIL_PROVIDER,
-						pass: process.env.MAIL_AUTH
+						user: env.variables.MAIL_PROVIDER,
+						pass: env.variables.MAIL_AUTH
 					}
 				})
 
@@ -53,7 +55,7 @@ cds.on('bootstrap', (app) => {
 				const floor = securityGuards[0].floor
 
 				transporter.sendMail({
-					from: process.env.MAIL_PROVIDER,
+					from: env.variables.MAIL_PROVIDER,
 					to: [emails],
 					subject: `Lista de check-ins para o dia ${ moment().format('DD/MM/YYYY')}. Localidade: ${office} - ${floor}`,
 					html: `<h4>${moment().format('DD/MM/YYYY')} ${office} - ${floor}` +
