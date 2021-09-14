@@ -1,9 +1,9 @@
 ## Generated mta.yaml based on template version 0.4.0
-## appName = checkinapp-api-test
+## appName = checkinapp-api
 ## language=nodejs; multitenant=false
 ## approuter=
 _schema-version: '3.1'
-ID: checkinapp-api-test
+ID: checkinapp-api
 version: 1.0.0
 description: "A simple CAP project."
 parameters:
@@ -18,7 +18,7 @@ build-parameters:
 
 modules:
  # --------------------- SERVER MODULE ------------------------
- - name: checkinapp-api-test-srv
+ - name: checkinapp-api-srv
  # ------------------------------------------------------------
    type: nodejs
    path: gen/srv
@@ -26,7 +26,7 @@ modules:
      buildpack: nodejs_buildpack
    requires:
     # Resources extracted from CAP configuration
-    - name: checkinapp-api-test-db
+    - name: checkinapp-api-db
    provides:
     - name: srv-api      # required by consumers of CAP services (e.g. approuter)
       properties:
@@ -37,7 +37,7 @@ resources:
  # services extracted from CAP configuration
  # 'service-plan' can be configured via 'cds.requires.<name>.vcap.plan'
 # ------------------------------------------------------------
- - name: checkinapp-api-test-db
+ - name: checkinapp-api-db
 # ------------------------------------------------------------
    type: com.sap.xs.hdi-container
    parameters:
