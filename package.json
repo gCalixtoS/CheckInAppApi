@@ -1,5 +1,5 @@
 {
-  "name": "checkinapp-api",
+  "name": "checkinapp-api-test",
   "version": "1.0.0",
   "description": "A simple CAP project.",
   "repository": "<Add your repository here>",
@@ -9,6 +9,7 @@
     "@microsoft/microsoft-graph-client": "^2.0.0",
     "@sap/cds": "^3",
     "@sap/cds-dk": "^1.8.4",
+    "@sap/hana-client": "^2.9.28",
     "azure-ad-jwt": "^1.1.0",
     "cds": "^0.2.0",
     "cors": "^2.8.5",
@@ -25,15 +26,16 @@
     "start": "npx cds run"
   },
   "devDependencies": {
+    "@sap/hdi-deploy": "^4.2.0",
     "sqlite3": "^4.2.0"
   },
   "cds": {
+    "hana": {
+      "deploy-format": "hdbtable"
+    },
     "requires": {
       "db": {
-        "kind": "sqlite",
-        "credentials": {
-          "database": "db/checkinappapi.db"
-        }
+        "kind": "hana"
       }
     }
   }

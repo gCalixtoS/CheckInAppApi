@@ -1,0 +1,49 @@
+## Generated mta.yaml based on template version 0.4.0
+## appName = checkinapp-api-test
+## language=nodejs; multitenant=false
+## approuter=
+_schema-version: '3.1'
+ID: checkinapp-api-test
+version: 1.0.0
+description: "A simple CAP project."
+parameters:
+  enable-parallel-deployments: true
+   
+build-parameters:
+  before-all:
+   - builder: custom
+     commands:
+      - npm install
+      - npx cds build
+
+modules:
+ # --------------------- SERVER MODULE ------------------------
+ - name: checkinapp-api-test-srv
+ # ------------------------------------------------------------
+   type: nodejs
+   path: gen/srv
+   parameters:
+     buildpack: nodejs_buildpack
+   requires:
+    # Resources extracted from CAP configuration
+    - name: checkinapp-api-test-db
+   provides:
+    - name: srv-api      # required by consumers of CAP services (e.g. approuter)
+      properties:
+        srv-url: ${default-url}
+
+
+resources:
+ # services extracted from CAP configuration
+ # 'service-plan' can be configured via 'cds.requires.<name>.vcap.plan'
+# ------------------------------------------------------------
+ - name: checkinapp-api-test-db
+# ------------------------------------------------------------
+   type: com.sap.xs.hdi-container
+   parameters:
+     service: hana  # or 'hanatrial' on trial landscapes
+     service-plan: hdi-shared
+   properties:
+     hdi-service-name: ${service-name}
+
+
